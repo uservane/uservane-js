@@ -1,0 +1,80 @@
+{
+  "name": "@uservane/openai-agents",
+  "version": "0.1.0",
+  "description": "UserVane agent-native capture for the OpenAI Agents SDK (JS/TS)",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "require": "./dist/server.cjs"
+    },
+    "./langfuse": {
+      "types": "./dist/langfuse.d.ts",
+      "import": "./dist/langfuse.js",
+      "require": "./dist/langfuse.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@openai/agents": ">=0.13.0",
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "@openai/agents": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@uservane/agent-core": "workspace:*",
+    "@uservane/agent-react": "workspace:*",
+    "langfuse": "3.38.20"
+  },
+  "devDependencies": {
+    "@openai/agents": "0.13.5",
+    "@types/node": "^22.13.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "jsdom": "^26.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uservane/uservane-js.git",
+    "directory": "packages/openai-agents"
+  },
+  "homepage": "https://github.com/uservane/uservane-js/tree/main/packages/openai-agents#readme",
+  "bugs": {
+    "url": "https://github.com/uservane/uservane-js/issues"
+  }
+}

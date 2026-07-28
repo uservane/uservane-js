@@ -1,0 +1,49 @@
+{
+  "name": "@uservane/browser",
+  "version": "0.1.0",
+  "description": "UserVane in-product survey widget SDK",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "size": "pnpm build && node scripts/check-size.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "happy-dom": "^17.4.4",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uservane/uservane-js.git",
+    "directory": "packages/browser"
+  },
+  "homepage": "https://github.com/uservane/uservane-js/tree/main/packages/browser#readme",
+  "bugs": {
+    "url": "https://github.com/uservane/uservane-js/issues"
+  }
+}

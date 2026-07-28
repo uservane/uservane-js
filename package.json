@@ -1,0 +1,30 @@
+{
+  "name": "uservane-js",
+  "private": true,
+  "type": "module",
+  "description": "UserVane JavaScript/TypeScript SDKs: honest in-product + agent-native feedback capture.",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@changesets/cli": "^2.27.9",
+    "typescript": "^5.8.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "zod": "^4.4.3"
+    }
+  }
+}

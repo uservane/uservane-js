@@ -1,0 +1,50 @@
+{
+  "name": "@uservane/langfuse-push",
+  "version": "0.1.0",
+  "description": "Server-only adapter: push UserVane linked feedback as Langfuse session scores",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "langfuse": "3.38.20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uservane/uservane-js.git",
+    "directory": "packages/langfuse-push"
+  },
+  "homepage": "https://github.com/uservane/uservane-js/tree/main/packages/langfuse-push#readme",
+  "bugs": {
+    "url": "https://github.com/uservane/uservane-js/issues"
+  }
+}
