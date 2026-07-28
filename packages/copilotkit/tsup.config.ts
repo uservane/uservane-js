@@ -21,7 +21,7 @@ export default defineConfig([
     format: ["esm", "cjs"],
     dts: true,
     sourcemap: true,
-    clean: true,
+    clean: false,
     minify: true,
     treeshake: true,
     target: "es2020",
