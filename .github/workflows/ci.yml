@@ -19,11 +19,13 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Build first: packages resolve their siblings via built dist/ (types +
+      # runtime), so typecheck and tests need the workspace built beforehand.
+      - name: Build
+        run: pnpm -r build
       - name: Lint (Biome)
         run: pnpm lint
       - name: Typecheck
         run: pnpm typecheck
-      - name: Build
-        run: pnpm -r build
       - name: Test
         run: pnpm test
