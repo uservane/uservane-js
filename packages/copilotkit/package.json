@@ -1,6 +1,6 @@
 {
   "name": "@uservane/copilotkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "UserVane frontend capture for CopilotKit (deterministic turn-resolution feedback)",
   "license": "MIT",
   "type": "module",
