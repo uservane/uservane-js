@@ -268,9 +268,6 @@ importers:
       '@types/react':
         specifier: ^18.3.18
         version: 18.3.31
-      '@types/react-native':
-        specifier: ^0.72.8
-        version: 0.72.8(react-native@0.87.0(@babel/core@7.29.7)(@types/react@18.3.31)(react@18.3.1))
       jsdom:
         specifier: ^26.0.0
         version: 26.1.0
@@ -1547,11 +1544,6 @@ packages:
   '@react-native/normalize-colors@0.87.0':
     resolution: {integrity: sha512-7aEGyrrquUqpbp+aEgOCp2xr0cTLYhJFCMfUqI4IoJddfwosra9Y5qtbrJU5Z/vBLndCmSIzABrWnHK0lxpwcA==}
 
-  '@react-native/virtualized-lists@0.72.8':
-    resolution: {integrity: sha512-J3Q4Bkuo99k7mu+jPS9gSUSgq+lLRSI/+ahXNwV92XgJ/8UgOTxu2LPwhJnBk/sQKxq7E8WkZBnBiozukQMqrw==}
-    peerDependencies:
-      react-native: '*'
-
   '@react-native/virtualized-lists@0.87.0':
     resolution: {integrity: sha512-rYQCtZupN7Iczm8fdGg3uKZUXhrxdZPRkg4BZK3RaQJ2HJ7n5tJNR2QPR3vSgpp5CATQggiGCuom1fNEC3T/8g==}
     engines: {node: ^22.13.0 || ^24.3.0 || >= 26.0.0}
@@ -2066,9 +2058,6 @@ packages:
     resolution: {integrity: sha512-Bsc+QHgp+P/F02XDzNCY9jnZNCUuLki36KT7VKrTXXLdHf+vHMNZnW1rVu5DNW/rCK+fya3DATySbLM4yhtKUw==}
     peerDependencies:
       '@types/react': ^19.2.0
-
-  '@types/react-native@0.72.8':
-    resolution: {integrity: sha512-St6xA7+EoHN5mEYfdWnfYt0e8u6k2FR0P9s2arYgakQGFgU1f9FlPrIEcj0X24pLCF5c5i3WVuLCUdiCYHmOoA==}
 
   '@types/react@18.3.31':
     resolution: {integrity: sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw==}
@@ -6316,12 +6305,6 @@ snapshots:
 
   '@react-native/normalize-colors@0.87.0': {}
 
-  '@react-native/virtualized-lists@0.72.8(react-native@0.87.0(@babel/core@7.29.7)(@types/react@18.3.31)(react@18.3.1))':
-    dependencies:
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      react-native: 0.87.0(@babel/core@7.29.7)(@types/react@18.3.31)(react@18.3.1)
-
   '@react-native/virtualized-lists@0.87.0(@types/react@18.3.31)(react-native@0.87.0(@babel/core@7.29.7)(@types/react@18.3.31)(react@18.3.1))(react@18.3.1)':
     dependencies:
       invariant: 2.2.4
@@ -6790,13 +6773,6 @@ snapshots:
     dependencies:
       '@types/react': 18.3.31
     optional: true
-
-  '@types/react-native@0.72.8(react-native@0.87.0(@babel/core@7.29.7)(@types/react@18.3.31)(react@18.3.1))':
-    dependencies:
-      '@react-native/virtualized-lists': 0.72.8(react-native@0.87.0(@babel/core@7.29.7)(@types/react@18.3.31)(react@18.3.1))
-      '@types/react': 18.3.31
-    transitivePeerDependencies:
-      - react-native
 
   '@types/react@18.3.31':
     dependencies:
