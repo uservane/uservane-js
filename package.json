@@ -18,13 +18,14 @@
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
+    "@biomejs/biome": "^2.5.8",
     "@changesets/cli": "^2.27.9",
     "typescript": "^5.8.0"
   },
   "pnpm": {
     "overrides": {
-      "zod": "^4.4.3"
+      "zod": "^4.4.3",
+      "typescript": "^5.9.3"
     }
   }
 }
