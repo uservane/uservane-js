@@ -1,6 +1,6 @@
 {
   "name": "@uservane/react-native",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "React Native SDK for UserVane honest microsurveys",
   "keywords": [
     "nps",
