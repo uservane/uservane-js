@@ -182,6 +182,21 @@ export class UserVaneLangfuseExporter {
 
     let flushError: unknown;
     if (exported > 0) {
+      // Await the SDK's pending event processing before flushing. `trace()`
+      // enqueues asynchronously, so a bare flush() here finds an empty queue and
+      // reports success without sending anything (verified against
+      // langfuse@3.38.20: zero HTTP requests, no error). Same defect and same
+      // fix as @uservane/langfuse-push.
+      const pending = (
+        this.lf as { pendingEventProcessingPromises?: Record<string, Promise<unknown>> }
+      ).pendingEventProcessingPromises;
+      if (pending !== undefined && pending !== null && typeof pending === "object") {
+        await Promise.all(Object.values(pending)).catch(() => {
+          // A processing failure still surfaces on the flush callback below.
+        });
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
       flushError = await new Promise<unknown>((resolve) => {
         try {
           this.lf.flush((err?: unknown) => resolve(err ?? null));

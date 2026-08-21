@@ -21,8 +21,11 @@
  *   ScoreBody includes optional traceId?, sessionId?, observationId? (all
  *   string | null). Observation score body carries traceId + observationId
  *   (no sessionId required). Session score body carries sessionId alone.
- * Confirm delivery with flush(cb), NOT flushAsync (flushAsync swallows
- * ingestion HTTP failures). Session-level scores: langfuse.com/docs/scores/custom.
+ * Delivery is confirmed by drainAndConfirm(), which awaits the SDK's pending
+ * event processing and only then flushes with a callback. Neither drain method
+ * is sufficient alone: a bare flush(cb) straight after score() sends nothing and
+ * still reports success, while flushAsync() sends but swallows the failure.
+ * Session-level scores: langfuse.com/docs/scores/custom.
  */
 
 import { Langfuse } from "langfuse";
@@ -45,16 +48,60 @@ export type LangfuseScoreClient = {
     observationId?: string | null;
   }): unknown;
   /**
-   * Drain the ingestion queue and report the result via the callback. We use
-   * flush(cb), NOT flushAsync(): verified against langfuse-core@3.38.20
-   * (lib/index.mjs), flushAsync() SWALLOWS an ingestion HTTP failure
-   * (logIngestionError + resolve, never rejects), so it cannot distinguish a
-   * delivered score from a lost one. flush(cb) surfaces the final error (after
-   * the SDK's own fetch retries) as the callback's `err` argument, which is the
-   * only reliable delivery confirmation the SDK exposes.
+   * Drain the ingestion queue and report the result via the callback.
+   *
+   * MUST NOT be called directly after `score()`. See {@link drainAndConfirm}:
+   * `score()` enqueues through an async processing step, so a bare `flush(cb)`
+   * finds an empty queue and reports success without sending anything.
    */
   flush(callback: (err?: unknown) => void): void;
 };
+
+/**
+ * Send whatever `score()` queued and report the real ingestion outcome.
+ *
+ * Neither SDK drain method does both halves on its own (verified empirically
+ * against langfuse@3.38.20 with a local ingestion server):
+ *
+ * - `flush(cb)` called straight after `score()` finds an EMPTY queue, returns in
+ *   about 1ms, and calls back with NO error having sent ZERO requests. `score()`
+ *   enqueues via an async processing step, so the item is not in the queue yet.
+ *   Acking `delivered` on that callback reports success for a score that was
+ *   never transmitted, and the trailing scores of a run are then lost when a
+ *   cron process exits.
+ * - `flushAsync()` awaits that processing and does send, but swallows the
+ *   failure. Its own docstring: "This function always resolves, even if there
+ *   were errors when flushing."
+ *
+ * So do what `flushAsync` does first (await the pending event processing), then
+ * flush WITH a callback so a real failure still surfaces. Confirmed to return
+ * the error for a 500 and for a 207 carrying per-event errors, and no error on
+ * a clean 200.
+ */
+async function drainAndConfirm(lf: LangfuseScoreClient): Promise<unknown> {
+  // `pendingEventProcessingPromises` is declared `private` in the SDK's types,
+  // so it cannot sit on the structural interface above without making the real
+  // Langfuse class unassignable to it. Read it defensively instead.
+  const pending = (lf as unknown as Record<string, unknown>).pendingEventProcessingPromises as
+    | Record<string, Promise<unknown>>
+    | undefined;
+  if (pending !== undefined && pending !== null && typeof pending === "object") {
+    await Promise.all(Object.values(pending)).catch(() => {
+      // A processing failure still shows up on the flush callback below.
+    });
+  } else {
+    // SDK internals moved. Yield the event loop so the async enqueue can land
+    // rather than flushing an empty queue and calling that a delivery.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+  return await new Promise<unknown>((resolve) => {
+    try {
+      lf.flush((err?: unknown) => resolve(err ?? null));
+    } catch (err) {
+      resolve(err ?? new Error("flush threw"));
+    }
+  });
+}
 
 export type PushPendingScoresOpts = {
   uservane: {
@@ -232,9 +279,10 @@ export async function pushPendingScores(
       continue;
     }
 
-    // Stable id makes re-push idempotent. flush(cb) confirms delivery (flushAsync
-    // would swallow a failure - see LangfuseScoreClient). The SDK's fetchWithRetry
-    // already retries transient errors; a callback err here is the final outcome
+    // Stable id makes re-push idempotent. drainAndConfirm() is what actually
+    // sends this and reports the outcome; a bare flush() here would return
+    // "delivered" without sending. The SDK's fetchWithRetry already retries
+    // transient errors, so an error back from it is the final outcome
     // -> ack failed (re-pollable), never a silent loss.
     if (isObservation) {
       lf.score({
@@ -254,13 +302,7 @@ export async function pushPendingScores(
         sessionId,
       });
     }
-    const flushErr = await new Promise<unknown>((resolve) => {
-      try {
-        lf.flush((err?: unknown) => resolve(err ?? null));
-      } catch (err) {
-        resolve(err ?? new Error("flush threw"));
-      }
-    });
+    const flushErr = await drainAndConfirm(lf);
     if (flushErr) {
       results.push({ id: score.id, state: "failed" });
       failed += 1;
