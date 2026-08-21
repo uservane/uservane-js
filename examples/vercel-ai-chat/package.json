@@ -1,0 +1,30 @@
+{
+  "name": "uservane-vercel-ai-chat-example",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Minimal Next.js chat that captures resolve-time feedback with @uservane/vercel-ai",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.45",
+    "@ai-sdk/react": "^4.0.76",
+    "@uservane/vercel-ai": "^0.1.3",
+    "ai": "^7.0.73",
+    "next": "^15.5.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -41,12 +41,23 @@ console.log(summary);
 
 1. `GET /v1/sdk/pending-scores` (secret-key authed) — linked + `score_state=pending`
    rows for **this project only** (verbatim PII).
-2. For each row, create a Langfuse **session-level** score via the official
-   `langfuse` Node SDK: `name = uservane.satisfaction` (or `scoreName`),
-   `value = rating` (0-10 raw), `comment = text`, keyed to `sessionId`.
+2. For each row, create a Langfuse score via the official `langfuse` Node SDK
+   with `name = uservane.satisfaction` (or `scoreName`), `value = rating`
+   (0-10 raw) and `comment = text`, at whichever level the row supports:
+   - **observation-level** when the row carries BOTH `traceId` and
+     `observationId`;
+   - otherwise **session-level**, keyed to `sessionId`.
+
+   A row with neither a full observation pair nor a session id is acked as
+   `failed` rather than pushed. We never write a half-id observation score,
+   because a mislinked score is worse than a missing one.
 3. `POST /v1/sdk/pending-scores/ack` with per-id `delivered` | `failed`.
-4. Transient Langfuse errors are retried with backoff; permanent failure is
-   acked as `failed` and re-pollable later with `includeFailed: true`.
+4. The Langfuse SDK's own `fetchWithRetry` retries transient ingestion errors.
+   A final failure is acked as `failed` and is re-pollable later with
+   `includeFailed: true`.
+
+Each score is created with a stable id derived from the UserVane score id, so a
+re-push upserts instead of duplicating.
 
 Unlinked rows are never in the queue and never pushed.
 
@@ -55,9 +66,15 @@ Unlinked rows are never in the queue and never pushed.
 Against installed `langfuse@3.38.20` / `langfuse-core` types:
 
 - `Langfuse.score(body: CreateLangfuseScoreBody): this`
-- `CreateLangfuseScoreBody` / `ScoreBody` includes optional `sessionId` with no
-  required `traceId` (session-only scores are supported).
-- Call `flushAsync()` after score creation to drain the SDK ingestion queue.
+- `CreateLangfuseScoreBody` / `ScoreBody` includes optional `traceId`,
+  `sessionId` and `observationId`. Session-only scores are supported
+  (`sessionId` with no `traceId`); observation scores carry `traceId` +
+  `observationId`.
+- Confirm delivery with `flush(cb)`, **not** `flushAsync()`. Verified against
+  `langfuse-core@3.38.20`: `flushAsync()` swallows an ingestion HTTP failure
+  (it logs and resolves, never rejects), so it cannot tell a delivered score
+  from a lost one. `flush(cb)` surfaces the final error as the callback's `err`
+  argument, which is the only reliable delivery signal the SDK exposes.
 
 See also: [Langfuse custom scores](https://langfuse.com/docs/scores/custom)
 (session-level scores, checked 2026-07-27).
