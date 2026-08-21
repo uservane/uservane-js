@@ -1,6 +1,6 @@
 {
   "name": "@uservane/vercel-ai",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Agent-native UserVane capture for Vercel AI SDK agents",
   "license": "MIT",
   "author": "Kevin O'Shea <kevin@myuid.com>",
