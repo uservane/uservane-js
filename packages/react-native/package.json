@@ -2,6 +2,18 @@
   "name": "@uservane/react-native",
   "version": "0.1.1",
   "description": "React Native SDK for UserVane honest microsurveys",
+  "keywords": [
+    "nps",
+    "csat",
+    "ces",
+    "survey",
+    "user-feedback",
+    "customer-feedback",
+    "uservane",
+    "react-native",
+    "mobile-survey",
+    "expo"
+  ],
   "license": "MIT",
   "author": "Kevin O'Shea <kevin@myuid.com>",
   "type": "module",
