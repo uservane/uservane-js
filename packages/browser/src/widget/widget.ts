@@ -104,6 +104,19 @@ function mountWidgetInner(
 
   const host = doc.createElement("div");
   host.setAttribute("data-uservane-root", survey.slug);
+  /**
+   * The mount element lives in the HOST page's light DOM, so the shadow root
+   * protects what is inside it and nothing protects the element itself. A site
+   * with a global rule like `div { border: 2px dashed; padding: 9px }` painted
+   * it as a stray empty box in the page flow, which is a visible artifact on
+   * somebody else's site.
+   *
+   * `display: contents` makes it generate no box at all, so there is nothing
+   * for a host rule to paint or lay out, while inheritance still passes through
+   * to the shadow content. Set as a priority declaration because the entire
+   * point is to beat whatever the host page declares.
+   */
+  host.style.setProperty("display", "contents", "important");
   host.style.fontFamily = "inherit";
 
   const shadow = host.attachShadow({ mode: "open" });
