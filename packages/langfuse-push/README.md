@@ -70,11 +70,21 @@ Against installed `langfuse@3.38.20` / `langfuse-core` types:
   `sessionId` and `observationId`. Session-only scores are supported
   (`sessionId` with no `traceId`); observation scores carry `traceId` +
   `observationId`.
-- Confirm delivery with `flush(cb)`, **not** `flushAsync()`. Verified against
-  `langfuse-core@3.38.20`: `flushAsync()` swallows an ingestion HTTP failure
-  (it logs and resolves, never rejects), so it cannot tell a delivered score
-  from a lost one. `flush(cb)` surfaces the final error as the callback's `err`
-  argument, which is the only reliable delivery signal the SDK exposes.
+- Delivery confirmation needs **both** SDK drain steps, not either one alone.
+  Verified empirically against `langfuse@3.38.20` with a local ingestion server:
+  - `flush(cb)` called straight after `score()` returns in about 1ms with **no
+    error and zero HTTP requests sent**. `score()` enqueues through an async
+    processing step, so the item is not in the queue yet and `flush` finds it
+    empty. Treating that callback as confirmation reports success for a score
+    that never left the process.
+  - `flushAsync()` awaits that processing and does send, but swallows the
+    failure. Its own docstring: "This function always resolves, even if there
+    were errors when flushing."
+
+  So this adapter awaits the pending event-processing promises first (what
+  `flushAsync` does internally) and only then calls `flush(cb)`. That both
+  transmits the score and surfaces a real failure, including a `207` carrying
+  per-event errors.
 
 See also: [Langfuse custom scores](https://langfuse.com/docs/scores/custom)
 (session-level scores, checked 2026-07-27).
