@@ -41,6 +41,18 @@ npm install @uservane/browser
 See the [quickstart guides](https://docs.uservane.com/start/quickstart-agent/) for
 the agent-native and classic-widget paths.
 
+## Examples
+
+| Path | What it shows |
+|---|---|
+| [`examples/vercel-ai-chat`](examples/vercel-ai-chat) | Clone-and-run Next.js chat with `@uservane/vercel-ai` (mint token, resolveTask, inline feedback) |
+
+```bash
+cd examples/vercel-ai-chat
+cp .env.example .env.local   # set UserVane + OpenAI keys
+npm install && npm run dev
+```
+
 ## Development
 
 This is a pnpm workspace.
